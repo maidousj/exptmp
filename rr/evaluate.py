@@ -55,12 +55,18 @@ def reliabilityCruve(actual, predictions, predictionsFlip, picName):
     ax1.set_title('Calibration plots  (reliability curve)')
     plt.savefig(picName)
 
+def calKappa(actual, predictions):
+    return metrics.cohen_kappa_score(actual, predictions)
+
+def calConMatrix(actual, predictions):
+    return metrics.confusion_matrix(actual, predictions)
+
 if __name__ == '__main__':
     actFileName = "/data/pythonsolution/trunoutput/test.csv"
-#    preFileName = "/data/pythonsolution/trunoutput/new_test.csv"
-#    preFlipFileName = "/data/pythonsolution/trunoutput/new_test_flip.csv"
-    preFileName = "/data/pythonsolution/trunoutput/sub_proba_test.csv"
-    preFlipFileName = "/data/pythonsolution/trunoutput/sub_proba_test_flip_0.5.csv"
+    preFileName = "/data/pythonsolution/trunoutput/new_test.csv"
+    preFlipFileName = "/data/pythonsolution/trunoutput/new_test_flip.csv"
+#    preFileName = "/data/pythonsolution/trunoutput/sub_proba_test.csv"
+#    preFlipFileName = "/data/pythonsolution/trunoutput/sub_proba_test_flip_0.5.csv"
 
     actual = loadFile(actFileName)
     predictions = loadFile(preFileName)
@@ -69,5 +75,10 @@ if __name__ == '__main__':
 #    evaluate(actual, preFileName)
 #    evaluate(actual, preFlipFileName)
 
-    reliabilityCruve(actual, predictions, predictionsFlip, "relCruve.png")
+#    reliabilityCruve(actual, predictions, predictionsFlip, "relCruve.png")
 
+#print ("Kappa for {} is {}".format("normal predictions", calKappa(actual, predictions)))
+#print ("Kappa for {} is {}".format("flip predictions", calKappa(actual, predictionsFlip)))
+
+print ("Confusion Matrix for {} is {}".format("normal predictions", calConMatrix(actual, predictions)))
+print ("Confusion Matrix for {} is {}".format("flip predictions", calConMatrix(actual, predictionsFlip)))
