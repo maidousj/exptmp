@@ -12,6 +12,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn.calibration import calibration_curve
+import numpy as np
 
 def loadFile(fileName):
     ret = []
@@ -46,6 +47,8 @@ def reliabilityCruve(actual, predictions, predictionsFlip, picName):
     fraction_of_positives, mean_predicted_value = calibration_curve(actual, predictions, n_bins=10)
     fraction_of_positives_flip, mean_predicted_value_flip = calibration_curve(actual, predictionsFlip, n_bins=10)
 
+    ax1.plot([0, 1], [0, 1], "k:", label="Perfectly calibrated")
+
     ax1.plot(mean_predicted_value, fraction_of_positives, "s-", label="clf_score (%1.3f)" % (clf_score))
     ax1.plot(mean_predicted_value_flip, fraction_of_positives_flip, "r-", label="clf_score (%1.3f)" % (clf_score_flip))
 
@@ -60,6 +63,27 @@ def calKappa(actual, predictions):
 
 def calConMatrix(actual, predictions):
     return metrics.confusion_matrix(actual, predictions)
+
+def testErrorRateCruve(actual, predictions, predictionsFlip, picName):
+    heldout = [0.95, 0.90, 0.75, 0.50, 0.01]
+    rounds = 20
+    xx = 1. - np.array(heldout)
+    yy = []
+    zz = []
+    for i in heldout:
+        yy_ = []
+        zz_ = []
+        for r in range(rounds):
+            yy_.append(1 - np.mean(predictions == actual))
+            zz_.append(1 - np.mean(predictionsFlip == actual))
+        yy.append(np.mean(yy_))
+        zz.append(np.mean(zz_))
+    plt.plot(xx, yy, label="normal")
+    plt.plot(xx, zz, label="noise")
+    plt.legend(loc="upper right")
+    plt.xlabel("Proportion train")
+    plt.ylabel("Test Error Rate")
+    plt.savefig(picName)
 
 if __name__ == '__main__':
     actFileName = "/data/pythonsolution/trunoutput/test.csv"
@@ -77,8 +101,10 @@ if __name__ == '__main__':
 
 #    reliabilityCruve(actual, predictions, predictionsFlip, "relCruve.png")
 
-#print ("Kappa for {} is {}".format("normal predictions", calKappa(actual, predictions)))
-#print ("Kappa for {} is {}".format("flip predictions", calKappa(actual, predictionsFlip)))
+print ("Kappa for {} is {}".format("normal predictions", calKappa(actual, predictions)))
+print ("Kappa for {} is {}".format("flip predictions", calKappa(actual, predictionsFlip)))
 
-print ("Confusion Matrix for {} is {}".format("normal predictions", calConMatrix(actual, predictions)))
-print ("Confusion Matrix for {} is {}".format("flip predictions", calConMatrix(actual, predictionsFlip)))
+#print ("Confusion Matrix for {} is {}".format("normal predictions", calConMatrix(actual, predictions)))
+#print ("Confusion Matrix for {} is {}".format("flip predictions", calConMatrix(actual, predictionsFlip)))
+
+#    testErrorRateCruve(actual, predictions, predictionsFlip, "errorCruve.png")
