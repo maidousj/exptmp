@@ -7,7 +7,8 @@ import csv
 from datetime import datetime
 from csv import DictReader
 from math import exp, log, sqrt
-import pdb
+#from sklearn import preprocessing
+import ipdb
 import numpy as np
 
 # TL; DR, the main training process starts on line: 250,
@@ -19,10 +20,10 @@ import numpy as np
 ##############################################################################
 
 # A, paths
-data_path = "../input/"
-train = data_path+'clicks_train.csv'               # path to training file
-test = data_path+'clicks_test.csv'                 # path to testing file
-submission = 'sub_proba_dp.csv'  # path of to be outputted submission file
+data_path = "/data/pythonsolution/truncate/"
+train = data_path+'train.csv'               # path to training file
+test = data_path+'test.csv'                 # path to testing file
+submission = '/data/pythonsolution/trunoutput/sub_proba_test_dp.csv'  # path of to be outputted submission file
 
 # B, model
 alpha = .1  # learning rate
@@ -45,6 +46,9 @@ holdout = None  # use every N training instance for holdout validation
 ##############################################################################
 
 class ftrl_proximal(object):
+    n = []
+    z = []
+    w = []
     ''' Our main algorithm: Follow the regularized leader - proximal
 
         In short,
@@ -133,7 +137,7 @@ class ftrl_proximal(object):
                 w[i] = 0.
             else:
                 # apply prediction time L1, L2 regularization to z and get w
-                w[i] = (sign * L1 - z[i]) / ((beta + sqrt(n[i])) / alpha + L2) + np.random.laplace(0, 1.0)
+                w[i] = (sign * L1 - z[i]) / ((beta + sqrt(n[i])) / alpha + L2) 
 
             wTx += w[i]
 
@@ -170,7 +174,7 @@ class ftrl_proximal(object):
         # update z and n
         for i in self._indices(x):
             sigma = (sqrt(n[i] + g * g) - sqrt(n[i])) / alpha
-            z[i] += g - sigma * w[i] 
+            z[i] += g - sigma * (w[i] + np.random.laplace(0, 1.0))
             n[i] += g * g
 
 
@@ -253,10 +257,12 @@ def data(path, D):
 start = datetime.now()
 
 # initialize ourselves a learner
+
 learner = ftrl_proximal(alpha, beta, L1, L2, D, interaction)
+wout = open('woutfile', 'w')
 
 print("Content..")
-with open(data_path + "promoted_content.csv") as infile:
+with open("/data/input/promoted_content.csv") as infile:
 	prcont = csv.reader(infile)
 	#prcont_header = (prcont.next())[1:]
 	prcont_header = next(prcont)[1:]
@@ -265,13 +271,13 @@ with open(data_path + "promoted_content.csv") as infile:
 		prcont_dict[int(row[0])] = row[1:]
 		if ind%100000 == 0:
 			print(ind)
-		#if ind==10000:
-			#break
+#		if ind==10000:
+#			break
 	print("After handle, content...",len(prcont_dict))
 del prcont
 
 print("Events..")
-with open(data_path + "events.csv") as infile:
+with open("/data/input/events.csv") as infile:
 	events = csv.reader(infile)
 	#events.next()
 	next(events)
@@ -291,8 +297,8 @@ with open(data_path + "events.csv") as infile:
 		event_dict[int(row[0])] = tlist[:] 
 		if ind%100000 == 0:
 			print("Events : ", ind)
-	#	if ind==10000:
-	#		break
+#		if ind==10000:
+#			break
 	print("After handle, events...",len(event_dict))
 del events
 
@@ -339,15 +345,22 @@ for e in range(epoch):
             # holdout: validate with every N instance, train with others
             loss += logloss(p, y)
             count += 1
+            print "abcdefg execute logloss"
         else:
             # step 2-2, update learner with label (click) information
             learner.update(x, p, y)
 
         if t%1000000 == 0:
             print("Processed : ", t, datetime.now())
-       # if t == 100000: 
-       #     break
+        if t == 1000000: 
+            break
        
+wout.write(str(learner.w))
+wout.write("\n\n")
+wout.write(str(learner.z))
+wout.write("\n\n")
+wout.write(str(learner.n))
+wout.close()
 
 ##############################################################################
 # start testing, and build Kaggle's submission file ##########################
@@ -360,5 +373,5 @@ with open(submission, 'w') as outfile:
         outfile.write('%s,%s,%s\n' % (disp_id, ad_id, str(p)))
         if t%1000000 == 0:
             print("Processed : ", t, datetime.now())
-        if t ==100000:
+        if t ==300000:
             break

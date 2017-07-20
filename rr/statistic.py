@@ -1,3 +1,7 @@
+'''
+Statistic 0s znd 1s
+'''
+
 import pdb
 
 flipName = "/data/pythonsolution/truncate/train_flip_0.5.csv"
