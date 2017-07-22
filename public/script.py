@@ -9,7 +9,6 @@ from csv import DictReader
 from math import exp, log, sqrt
 #from sklearn import preprocessing
 import ipdb
-import numpy as np
 
 # TL; DR, the main training process starts on line: 250,
 # you may want to start reading the code from there
@@ -23,12 +22,18 @@ import numpy as np
 data_path = "/data/pythonsolution/truncate/"
 train = data_path+'train.csv'               # path to training file
 test = data_path+'test.csv'                 # path to testing file
-submission = '/data/pythonsolution/trunoutput/sub_proba_test_dp_0.5.csv'  # path of to be outputted submission file
+submission = '/data/pythonsolution/trunoutput/result_with_new_parameters.csv'  # path of to be outputted submission file
 
 # B, model
-alpha = .1  # learning rate
-beta = 0.   # smoothing parameter for adaptive learning rate
-L1 = 0.    # L1 regularization, larger value means more regularized
+#alpha = .1  # learning rate
+#beta = 0.   # smoothing parameter for adaptive learning rate
+#L1 = 0.    # L1 regularization, larger value means more regularized
+#L2 = 0.     # L2 regularization, larger value means more regularized
+
+# B, model (new)
+alpha = 0.05  # learning rate
+beta = 0.5   # smoothing parameter for adaptive learning rate
+L1 = 1.0    # L1 regularization, larger value means more regularized
 L2 = 0.     # L2 regularization, larger value means more regularized
 
 # C, feature/hash trick
@@ -40,8 +45,6 @@ epoch = 1       # learn training data for N passes
 holdafter = None   # data after date N (exclusive) are used as validation
 holdout = None  # use every N training instance for holdout validation
 
-# E, Laplace(delta/epsilon)
-para = 0.5
 
 ##############################################################################
 # class, function, generator definitions #####################################
@@ -139,7 +142,7 @@ class ftrl_proximal(object):
                 w[i] = 0.
             else:
                 # apply prediction time L1, L2 regularization to z and get w
-                w[i] = (sign * L1 - z[i]) / ((beta + sqrt(n[i])) / alpha + L2) 
+                w[i] = (sign * L1 - z[i]) / ((beta + sqrt(n[i])) / alpha + L2)
 
             wTx += w[i]
 
@@ -176,7 +179,7 @@ class ftrl_proximal(object):
         # update z and n
         for i in self._indices(x):
             sigma = (sqrt(n[i] + g * g) - sqrt(n[i])) / alpha
-            z[i] += g - sigma * (w[i] + np.random.laplace(0, para))
+            z[i] += g - sigma * w[i]
             n[i] += g * g
 
 
@@ -261,7 +264,7 @@ start = datetime.now()
 # initialize ourselves a learner
 
 learner = ftrl_proximal(alpha, beta, L1, L2, D, interaction)
-wout = open('woutfile', 'w')
+wout = open('woutfile_with_new_parameters.txt', 'w')
 
 print("Content..")
 with open("/data/input/promoted_content.csv") as infile:
@@ -299,8 +302,8 @@ with open("/data/input/events.csv") as infile:
 		event_dict[int(row[0])] = tlist[:] 
 		if ind%100000 == 0:
 			print("Events : ", ind)
-#		if ind==10000:
-#			break
+		#if ind==10000:
+		#	break
 	print("After handle, events...",len(event_dict))
 del events
 

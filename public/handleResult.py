@@ -14,13 +14,13 @@ import ipdb
 #predictFileName = "/data/pythonsolution/output/sub_proba_test.csv"
 #predictFileFlipName = "/data/pythonsolution/output/sub_proba_test_flip.csv"
 actualFileName = "/data/pythonsolution/trunoutput/test.csv"
-predictFileName = "/data/pythonsolution/trunoutput/sub_proba_test.csv"
+predictFileName = "/data/pythonsolution/trunoutput/result_with_new_parameters.csv"
 #predictFileFlipName = "/data/pythonsolution/trunoutput/sub_proba_test_flip_0.5.csv"
 #actualFileName = "/data/pythonsolution/trunoutput/test.csv"
 #predictFileName = "/data/pythonsolution/trunoutput/new_test.csv"
 #predictFileFlipName = "/data/pythonsolution/trunoutput/new_test_flip.csv"
 
-predictFileFlipName = "/data/pythonsolution/trunoutput/sub_proba_test_dp.csv"
+predictFileFlipName = "/data/pythonsolution/trunoutput/sub_proba_test.csv"
 
 def loadFile(fileName):
     ret = []
@@ -52,6 +52,8 @@ def drawPic(picName, title, xlabel, ylabel, x1, y1, x2, y2):
 
     roc_auc_orign = auc(false_positive_rate, true_positive_rate)
     roc_auc_dp = auc(fpr, tpr)
+    print roc_auc_orign
+    print roc_auc_dp
     
     plt.plot(x1, y1, 'b', label = 'normal AUC = %0.2f'% (roc_auc_orign))
     plt.plot(x2, y2, 'g', label = 'dp AUC = %0.2f'%(roc_auc_dp))
@@ -63,7 +65,7 @@ def drawPic(picName, title, xlabel, ylabel, x1, y1, x2, y2):
     plt.ylabel(xlabel)
     plt.xlabel(ylabel)
 
-    plt.savefig(picName)
+#    plt.savefig(picName)
 
 
 if __name__ == '__main__':
@@ -76,7 +78,7 @@ if __name__ == '__main__':
     fpr, tpr, thd = roc_curve(actual, predictionsByFlip)
     print "thd = ", thd, len(thd)
 
-    picName = "../png/roc_dp.png"
+    picName = "../png/roc_dp_0.5.png"
     drawPic(picName, 'Receiver Operating Characteristic', 'True Positive Rate', 'False Positive Rate', false_positive_rate, true_positive_rate, fpr, tpr)
 
 #    precision, recall, thresholds = metrics.precision_recall_curve(actual, predictions)
