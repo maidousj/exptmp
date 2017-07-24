@@ -14,7 +14,7 @@ import ipdb
 #predictFileName = "/data/pythonsolution/output/sub_proba_test.csv"
 #predictFileFlipName = "/data/pythonsolution/output/sub_proba_test_flip.csv"
 actualFileName = "/data/pythonsolution/trunoutput/test.csv"
-predictFileName = "/data/pythonsolution/trunoutput/result_with_new_parameters_2**26.csv"
+predictFileName = "/data/pythonsolution/trunoutput/result_with_new_parameters_2**24_5.csv"
 #predictFileFlipName = "/data/pythonsolution/trunoutput/sub_proba_test_flip_0.5.csv"
 #actualFileName = "/data/pythonsolution/trunoutput/test.csv"
 #predictFileName = "/data/pythonsolution/trunoutput/new_test.csv"

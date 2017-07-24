@@ -22,7 +22,7 @@ import ipdb
 data_path = "/data/pythonsolution/truncate/"
 train = data_path+'train.csv'               # path to training file
 test = data_path+'test.csv'                 # path to testing file
-submission = '/data/pythonsolution/trunoutput/result_with_new_parameters_2**24.csv'  # path of to be outputted submission file
+submission = '/data/pythonsolution/trunoutput/result_with_new_parameters_2**24_5.csv'  # path of to be outputted submission file
 
 # B, model
 #alpha = .1  # learning rate
@@ -41,7 +41,7 @@ D = 2 ** 24             # number of weights to use
 interaction = False     # whether to enable poly2 feature interactions
 
 # D, training/validation
-epoch = 1       # learn training data for N passes
+epoch = 5       # learn training data for N passes
 holdafter = None   # data after date N (exclusive) are used as validation
 holdout = None  # use every N training instance for holdout validation
 
