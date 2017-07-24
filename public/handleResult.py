@@ -14,13 +14,13 @@ import ipdb
 #predictFileName = "/data/pythonsolution/output/sub_proba_test.csv"
 #predictFileFlipName = "/data/pythonsolution/output/sub_proba_test_flip.csv"
 actualFileName = "/data/pythonsolution/trunoutput/test.csv"
-predictFileName = "/data/pythonsolution/trunoutput/result_with_new_parameters.csv"
+predictFileName = "/data/pythonsolution/trunoutput/result_with_new_parameters_2**26.csv"
 #predictFileFlipName = "/data/pythonsolution/trunoutput/sub_proba_test_flip_0.5.csv"
 #actualFileName = "/data/pythonsolution/trunoutput/test.csv"
 #predictFileName = "/data/pythonsolution/trunoutput/new_test.csv"
 #predictFileFlipName = "/data/pythonsolution/trunoutput/new_test_flip.csv"
 
-predictFileFlipName = "/data/pythonsolution/trunoutput/sub_proba_test.csv"
+predictFileFlipName = "/data/pythonsolution/trunoutput/sub_proba_test_dp_0.5_new2**24.csv"
 
 def loadFile(fileName):
     ret = []

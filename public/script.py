@@ -7,7 +7,7 @@ import csv
 from datetime import datetime
 from csv import DictReader
 from math import exp, log, sqrt
-#from sklearn import preprocessing
+from sklearn import preprocessing
 import ipdb
 
 # TL; DR, the main training process starts on line: 250,
@@ -22,7 +22,7 @@ import ipdb
 data_path = "/data/pythonsolution/truncate/"
 train = data_path+'train.csv'               # path to training file
 test = data_path+'test.csv'                 # path to testing file
-submission = '/data/pythonsolution/trunoutput/result_with_new_parameters.csv'  # path of to be outputted submission file
+submission = '/data/pythonsolution/trunoutput/result_with_new_parameters_2**24.csv'  # path of to be outputted submission file
 
 # B, model
 #alpha = .1  # learning rate
@@ -37,7 +37,7 @@ L1 = 1.0    # L1 regularization, larger value means more regularized
 L2 = 0.     # L2 regularization, larger value means more regularized
 
 # C, feature/hash trick
-D = 2 ** 20             # number of weights to use
+D = 2 ** 24             # number of weights to use
 interaction = False     # whether to enable poly2 feature interactions
 
 # D, training/validation
@@ -197,6 +197,10 @@ def logloss(p, y):
     p = max(min(p, 1. - 10e-15), 10e-15)
     return -log(p) if y == 1. else -log(1. - p)
 
+def scale(X_train):
+    min_max_scaler = preprocessing.MinMaxScaler()
+    X_train_minmax = min_max_scaler.fit_transform(X_train)
+    return X_train_minmax
 
 def data(path, D):
     ''' GENERATOR: Apply hash-trick to the original csv row
@@ -251,6 +255,8 @@ def data(path, D):
             x.append(abs(hash('leakage_row_found_1'))%D)
         else:
             x.append(abs(hash('leakage_row_not_found'))%D)
+
+#        x_scale = scale(x)
             
         yield t, disp_id, ad_id, x, y
 
@@ -276,8 +282,8 @@ with open("/data/input/promoted_content.csv") as infile:
 		prcont_dict[int(row[0])] = row[1:]
 		if ind%100000 == 0:
 			print(ind)
-#		if ind==10000:
-#			break
+		#if ind==10000:
+		#	break
 	print("After handle, content...",len(prcont_dict))
 del prcont
 

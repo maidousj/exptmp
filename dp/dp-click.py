@@ -23,16 +23,16 @@ import numpy as np
 data_path = "/data/pythonsolution/truncate/"
 train = data_path+'train.csv'               # path to training file
 test = data_path+'test.csv'                 # path to testing file
-submission = '/data/pythonsolution/trunoutput/sub_proba_test_dp_0.5.csv'  # path of to be outputted submission file
+submission = '/data/pythonsolution/trunoutput/sub_proba_test_dp_1.0_new2**24.csv'  # path of to be outputted submission file
 
 # B, model
-alpha = .1  # learning rate
-beta = 0.   # smoothing parameter for adaptive learning rate
-L1 = 0.    # L1 regularization, larger value means more regularized
+alpha = 0.05  # learning rate
+beta = 0.5   # smoothing parameter for adaptive learning rate
+L1 = 1.0    # L1 regularization, larger value means more regularized
 L2 = 0.     # L2 regularization, larger value means more regularized
 
 # C, feature/hash trick
-D = 2 ** 20             # number of weights to use
+D = 2 ** 24             # number of weights to use
 interaction = False     # whether to enable poly2 feature interactions
 
 # D, training/validation
@@ -41,7 +41,7 @@ holdafter = None   # data after date N (exclusive) are used as validation
 holdout = None  # use every N training instance for holdout validation
 
 # E, Laplace(delta/epsilon)
-para = 0.5
+para = 1.0
 
 ##############################################################################
 # class, function, generator definitions #####################################
