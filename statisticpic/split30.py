@@ -6,6 +6,7 @@ Date: 2017-07-24 20:37
 import pandas as pd
 import csv
 import random
+from datetime import datetime
 import ipdb
 
 def random_without_same(min_v, max_v, num):
@@ -29,6 +30,7 @@ def df2dic(df, maxValue):
     start = 0
 
     for key in range(1, maxValue):
+        print "construct dict ", key
         arr, start = extract(key, start, end, df)
         dic[key] = arr
     return dic
@@ -37,28 +39,40 @@ def writeFile(outfile, dic):
     for line in dic:
         outfile.write(",".join(str(e) for e in line) + '\n')
 
+
 if __name__ == '__main__':
-    maxValue = 16874594 # max value in file +1
+#    maxValue = 16874594 # max value in file +1
+    maxValue = 1932987+1 # max value in file +1
 #    maxValue = 11
-    num = 11820618
-    infile = '/data/input/clicks_train.csv'
-    outTrain = '/data/pythonsolution/input/train.csv'
-    outTest = '/data/pythonsolution/input/test.csv'
+    num = int(maxValue*0.7)
+    infile = './train.csv'
+    outTrain = '/tmp/train.csv'
+    outTest = '/tmp/test.csv'
 
-    df = pd.read_csv(infile)
-    dic = df2dic(df, maxValue)
-#    print dic
-
+    print "random shuffle array..."
     tmp1, tmp2 = random_without_same(1, maxValue, num)
 
-    with open (outTrain, 'w') as outfile:
-        outfile.write('display_id,ad_id,clicked\n')
-        for i in tmp1:
-            print("write displayid = {} in {}".format(i, outTrain))
-            writeFile(outfile, dic[i])
+    print "load file..."
+    df = pd.read_csv(infile)
 
-    with open (outTest, 'w') as outfile:
-        outfile.write('display_id,ad_id,clicked\n')
-        for i in tmp2:
-            print("write displayid = {} in {}".format(i, outTest))
-            writeFile(outfile, dic[i])
+    outTrainfile = open (outTrain, 'w') 
+    outTestfile = open (outTest, 'w') 
+    outTrainfile.write('display_id,ad_id,clicked\n')
+    outTestfile.write('display_id,ad_id,clicked\n')
+
+    for i in range(len(df)):
+        display_id = df['display_id'][i]
+
+        if i%1000 == 0:
+            print("Processed : ", i, datetime.now())
+
+        line = list(df.loc[i])
+        if display_id in tmp1:
+            outTrainfile.write(",".join(str(e) for e in line) + '\n')
+        elif display_id in tmp2:
+            outTestfile.write(",".join(str(e) for e in line) + '\n')
+        else:
+            print("bullshit : line num = {}, line = {} ".format(i, line)) 
+
+    outTrainfile.close()
+    outTestfile.close()
