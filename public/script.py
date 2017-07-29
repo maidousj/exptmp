@@ -8,7 +8,10 @@ from datetime import datetime
 from csv import DictReader
 from math import exp, log, sqrt
 from sklearn import preprocessing
+import sys
 import ipdb
+
+csv.field_size_limit(sys.maxsize)
 
 # TL; DR, the main training process starts on line: 250,
 # you may want to start reading the code from there
@@ -22,7 +25,8 @@ import ipdb
 data_path = "/data/pythonsolution/truncate/"
 train = data_path+'train.csv'               # path to training file
 test = data_path+'test.csv'                 # path to testing file
-submission = '/data/pythonsolution/trunoutput/result_with_new_parameters_2**24_5.csv'  # path of to be outputted submission file
+#submission = '/data/pythonsolution/trunoutput/result_with_new_parameters_2**24_5.csv'  # path of to be outputted submission file
+submission = '/data/pythonsolution/trunoutput/result_with_leak.csv'  # path of to be outputted submission file
 
 # B, model
 #alpha = .1  # learning rate
@@ -41,7 +45,7 @@ D = 2 ** 24             # number of weights to use
 interaction = False     # whether to enable poly2 feature interactions
 
 # D, training/validation
-epoch = 5       # learn training data for N passes
+epoch = 1       # learn training data for N passes
 holdafter = None   # data after date N (exclusive) are used as validation
 holdout = None  # use every N training instance for holdout validation
 
@@ -270,7 +274,7 @@ start = datetime.now()
 # initialize ourselves a learner
 
 learner = ftrl_proximal(alpha, beta, L1, L2, D, interaction)
-wout = open('woutfile_with_new_parameters.txt', 'w')
+#wout = open('woutfile_with_new_parameters.txt', 'w')
 
 print("Content..")
 with open("/data/input/promoted_content.csv") as infile:
@@ -315,8 +319,8 @@ del events
 
 print("Leakage file..")
 leak_uuid_dict= {}
-"""
-with open(data_path+"leak_uuid_doc.csv") as infile:
+
+with open("/data/input/leak.csv") as infile:
 	doc = csv.reader(infile)
 	doc.next()
 	leak_uuid_dict = {}
@@ -327,7 +331,7 @@ with open(data_path+"leak_uuid_doc.csv") as infile:
 			print("Leakage file : ", ind)
 	print(len(leak_uuid_dict))
 del doc
-"""	
+	
 
 # start training
 for e in range(epoch):
@@ -366,12 +370,12 @@ for e in range(epoch):
         if t == 1000000: 
             break
        
-wout.write(str(learner.w))
-wout.write("\n\n")
-wout.write(str(learner.z))
-wout.write("\n\n")
-wout.write(str(learner.n))
-wout.close()
+#wout.write(str(learner.w))
+#wout.write("\n\n")
+#wout.write(str(learner.z))
+#wout.write("\n\n")
+#wout.write(str(learner.n))
+#wout.close()
 
 ##############################################################################
 # start testing, and build Kaggle's submission file ##########################
@@ -386,3 +390,4 @@ with open(submission, 'w') as outfile:
             print("Processed : ", t, datetime.now())
         if t ==300000:
             break
+    outfile.close()

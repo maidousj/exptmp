@@ -7,7 +7,7 @@ def download_and_unzip_data():
 #    username = raw_input("Enter Kaggle username: ")
 #    pwd = getpass.getpass("Enter Kaggle password: ")
     username = 'maidousj'
-    pwd = 'Xiaoming001'	
+    pwd = ''	
 
     # The direct link to the Kaggle data set
     data_urls = ['https://www.kaggle.com/c/outbrain-click-prediction/download/page_views.csv.zip']

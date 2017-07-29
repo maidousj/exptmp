@@ -14,6 +14,7 @@ import numpy as np
 # TL; DR, the main training process starts on line: 250,
 # you may want to start reading the code from there
 
+csv.field_size_limit(100000000)
 
 ##############################################################################
 # parameters #################################################################
@@ -23,7 +24,7 @@ import numpy as np
 data_path = "/data/pythonsolution/truncate/"
 train = data_path+'train.csv'               # path to training file
 test = data_path+'test.csv'                 # path to testing file
-submission = '/data/pythonsolution/trunoutput/sub_proba_test_dp_1.0_new2**24.csv'  # path of to be outputted submission file
+submission = '/data/pythonsolution/trunoutput/result_with_leak_dp.csv'  # path of to be outputted submission file
 
 # B, model
 alpha = 0.05  # learning rate
@@ -261,8 +262,23 @@ start = datetime.now()
 # initialize ourselves a learner
 
 learner = ftrl_proximal(alpha, beta, L1, L2, D, interaction)
-wout = open('woutfile', 'w')
+#wout = open('woutfile', 'w')
 
+print("Leakage file..")
+leak_uuid_dict= {}
+
+with open("/data/input/leak.csv") as infile:
+	doc = csv.reader(infile)
+	doc.next()
+	leak_uuid_dict = {}
+	for ind, row in enumerate(doc):
+		doc_id = int(row[0])
+		leak_uuid_dict[doc_id] = set(row[1].split(' '))
+		if ind%100000==0:
+			print("Leakage file : ", ind)
+	print(len(leak_uuid_dict))
+del doc
+	
 print("Content..")
 with open("/data/input/promoted_content.csv") as infile:
 	prcont = csv.reader(infile)
@@ -304,21 +320,6 @@ with open("/data/input/events.csv") as infile:
 	print("After handle, events...",len(event_dict))
 del events
 
-print("Leakage file..")
-leak_uuid_dict= {}
-"""
-with open(data_path+"leak_uuid_doc.csv") as infile:
-	doc = csv.reader(infile)
-	doc.next()
-	leak_uuid_dict = {}
-	for ind, row in enumerate(doc):
-		doc_id = int(row[0])
-		leak_uuid_dict[doc_id] = set(row[1].split(' '))
-		if ind%100000==0:
-			print("Leakage file : ", ind)
-	print(len(leak_uuid_dict))
-del doc
-"""	
 
 # start training
 for e in range(epoch):
@@ -357,12 +358,12 @@ for e in range(epoch):
         if t == 1000000: 
             break
        
-wout.write(str(learner.w))
-wout.write("\n\n")
-wout.write(str(learner.z))
-wout.write("\n\n")
-wout.write(str(learner.n))
-wout.close()
+#wout.write(str(learner.w))
+#wout.write("\n\n")
+#wout.write(str(learner.z))
+##wout.write("\n\n")
+#wout.write(str(learner.n))
+#wout.close()
 
 ##############################################################################
 # start testing, and build Kaggle's submission file ##########################
